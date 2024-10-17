@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematički Zadatci</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Svetlo plava pozadina */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #4caf50; /* Pastelna zelena */
+        }
+
+        .task {
+            background-color: #e1f5fe; /* Svetlo plava */
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        textarea {
+            width: 80%;
+            height: 100px;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .input-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            margin-right: 10px;
+            width: 30%;
+        }
+
+        button {
+            background-color: #4caf50; /* Pastelna zelena */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #388e3c; /* Tamnija nijansa zelene */
+        }
+
+        .feedback {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        .navigation {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <h1>Добродошли!</br> Вежбај Сабирање и Одузимање</h1>
+        <p>Задаци су насумично генерисани. Упиши разраду задатка и коначно решење. Срећно!</p>
+        <div class="task" id="task"></div>
+        <textarea id="solution" placeholder="Радите разраду овде..."></textarea>
+        <div class="input-area">
+            <input type="number" id="result" placeholder="Унесите крајњи резултат...">
+            <button id="checkButton">Потврди резултат</button>
+        </div>
+        <div id="feedback" class="feedback"></div>
+        <div class="navigation">
+            <button id="prevTask">Претходни задатак</button>
+            <button id="nextTask">Следећи задатак</button>
+        </div>
+    </div>
+
+    <script>
+        const tasks = [
+            { text: 'Marko je imao 60 dinara. Kupio je olovku za 20 dinara i gumicu za 15 dinara. Koliko mu je novca ostalo?', equation: '60 - (20 + 15)', solution: 25 },
+    { text: 'Povećaj razliku brojeva 86 i 44 za zbir brojeva 13 i 9. Izračunaj rezultat.', equation: '(86 - 44) + (13 + 9)', solution: 64 },
+    { text: 'Na jednoj ogrlici se nalazi 70 perlica. Plavih ima 25, crvenih 30, a ostatak su žute. Koliko ima žutih perlica?', equation: '70 - (25 + 30)', solution: 15 },
+    { text: 'Poštar ima 75 pisama. Prvi dan isporučuje 25, a sledećeg dana još 30. Koliko mu je pisama ostalo?', equation: '75 - (25 + 30)', solution: 20 },
+    { text: 'Od ukupno 90 golubova, 30 je odletelo prvog dana, a sledećeg dana još 25. Koliko je golubova ostalo?', equation: '90 - (30 + 25)', solution: 35 },
+    { text: 'Od broja 78 oduzmi zbir brojeva 27 i 16.', equation: '78 - (27 + 16)', solution: 35 },
+    { text: 'U autobusu je bilo 50 putnika. Na prvoj stanici izašlo je 15, a na sledećoj stanici još 10. Koliko je putnika ostalo?', equation: '50 - (15 + 10)', solution: 25 },
+    { text: 'Od broja 95 oduzmi zbir brojeva 40 i 20.', equation: '95 - (40 + 20)', solution: 35 },
+    { text: 'U prodavnici je bilo 80 bombona. Prvog dana prodato je 30, a sledećeg još 25. Koliko bombona je ostalo?', equation: '80 - (30 + 25)', solution: 25 },
+    { text: 'Na polici se nalazilo 85 knjiga. Prvog dana je prodato 45, a sledećeg dana još 20. Koliko je knjiga ostalo?', equation: '85 - (45 + 20)', solution: 20 },
+    { text: 'Od broja 68 oduzmi zbir brojeva 23 i 18.', equation: '68 - (23 + 18)', solution: 27 },
+    { text: 'Milica je imala 90 dinara. Potrošila je 40 na grickalice i 30 na sokiće. Koliko je novca ostalo?', equation: '90 - (40 + 30)', solution: 20 },
+    { text: 'Na drvetu je bilo 50 jabuka. Prvog dana je palo 20, a sledećeg dana još 15. Koliko je jabuka ostalo na drvetu?', equation: '50 - (20 + 15)', solution: 15 },
+    { text: 'U kutiji je bilo 100 bombona. Prvog dana su pojedene 40, a sledećeg dana još 35. Koliko bombona je ostalo?', equation: '100 - (40 + 35)', solution: 25 },
+    { text: 'Od broja 98 oduzmi zbir brojeva 45 i 30.', equation: '98 - (45 + 30)', solution: 23 },
+    { text: 'Petar je imao 65 dinara. Kupio je čokoladicu za 25 dinara i sladoled za 20 dinara. Koliko mu je novca ostalo?', equation: '65 - (25 + 20)', solution: 20 },
+    { text: 'U prodavnici je bilo 90 balona. Prvog dana je prodato 30, a sledećeg dana još 40. Koliko balona je ostalo?', equation: '90 - (30 + 40)', solution: 20 },
+    { text: 'Na jednom polju bilo je 120 cvetova. Prvog dana je ubrano 50, a sledećeg još 30. Koliko cvetova je ostalo?', equation: '120 - (50 + 30)', solution: 40 },
+    { text: 'U voćnjaku je bilo 80 krušaka. Prvog dana je ubrano 25, a sledećeg dana još 30. Koliko je krušaka ostalo?', equation: '80 - (25 + 30)', solution: 25 },
+    { text: 'Na tavanu je bilo 75 zrna kukuruza. Prvog dana je pojedeno 30, a sledećeg dana još 20. Koliko zrna je ostalo?', equation: '75 - (30 + 20)', solution: 25 },
+    { text: 'U korpi je bilo 60 jabuka. Prvog dana je prodato 25, a sledećeg dana još 20. Koliko je jabuka ostalo?', equation: '60 - (25 + 20)', solution: 15 },
+    { text: 'Na stolu je bilo 90 olovaka. Prvog dana je uzeto 35, a sledećeg još 30. Koliko je olovaka ostalo?', equation: '90 - (35 + 30)', solution: 25 },
+    { text: 'Od broja 85 oduzmi zbir brojeva 30 i 20.', equation: '85 - (30 + 20)', solution: 35 },
+    { text: 'Na polici je bilo 100 knjiga. Prvog dana je prodato 40, a sledećeg još 30. Koliko je knjiga ostalo?', equation: '100 - (40 + 30)', solution: 30 },
+    { text: 'Od broja 75 oduzmi zbir brojeva 20 i 25.', equation: '75 - (20 + 25)', solution: 30 },
+    { text: 'Na jednoj traci je bilo 85 bombona. Prvog dana je prodato 30, a sledećeg još 40. Koliko bombona je ostalo?', equation: '85 - (30 + 40)', solution: 15 },
+    { text: 'Na tavanu je bilo 90 kutija. Prvog dana je uzeto 40, a sledećeg još 30. Koliko kutija je ostalo?', equation: '90 - (40 + 30)', solution: 20 },
+    { text: 'Od broja 100 oduzmi zbir brojeva 45 i 35.', equation: '100 - (45 + 35)', solution: 20 },
+    { text: 'Marko je imao 50 dinara. Potrošio je 20 na grickalice i 15 na sokić. Koliko je novca ostalo?', equation: '50 - (20 + 15)', solution: 15 },
+    { text: 'U prodavnici je bilo 80 balona. Prvog dana je prodato 25, a sledećeg dana još 30. Koliko balona je ostalo?', equation: '80 - (25 + 30)', solution: 25 },
+    { text: 'Na jednoj traci je bilo 60 bombona. Prvog dana je prodato 20, a sledećeg još 25. Koliko bombona je ostalo?', equation: '60 - (20 + 25)', solution: 15 },
+    { text: 'Od broja 78 oduzmi zbir brojeva 30 i 20.', equation: '78 - (30 + 20)', solution: 28 },
+    { text: 'Na drvetu je bilo 120 jabuka. Prvog dana je ubrano 45, a sledećeg još 50. Koliko je jabuka ostalo?', equation: '120 - (45 + 50)', solution: 25 },
+    { text: 'Od broja 95 oduzmi zbir brojeva 35 i 40.', equation: '95 - (35 + 40)', solution: 20 },
+    { text: 'Petar je imao 85 dinara. Potrošio je 30 na knjigu i 20 na olovku. Koliko je novca ostalo?', equation: '85 - (30 + 20)', solution: 35 },
+    { text: 'Na jednoj traci je bilo 70 bombona. Prvog dana je prodato 25, a sledećeg još 30. Koliko bombona je ostalo?', equation: '70 - (25 + 30)', solution: 15 },
+    { text: 'Od broja 98 oduzmi zbir brojeva 40 i 35.', equation: '98 - (40 + 35)', solution: 23 },
+    { equation: '50 - (15 + 20)', solution: 15 },
+    { equation: '80 - (30 + 20)', solution: 30 },
+    { equation: '40 - (10 + 15)', solution: 15 },
+    { equation: '60 - (20 + 15)', solution: 25 },
+    { equation: '90 - (25 + 30)', solution: 35 },
+    { equation: '70 - (20 + 15)', solution: 35 },
+    { equation: '100 - (40 + 30)', solution: 30 },
+    { equation: '55 - (25 + 15)', solution: 15 },
+    { equation: '85 - (20 + 35)', solution: 30 },
+    { equation: '65 - (20 + 25)', solution: 20 },
+    { equation: '72 - (30 + 20)', solution: 22 },
+    { equation: '45 - (10 + 20)', solution: 15 },
+    { equation: '60 - (15 + 20)', solution: 25 },
+    { equation: '90 - (40 + 20)', solution: 30 },
+    { equation: '80 - (25 + 35)', solution: 20 },
+    { equation: '100 - (50 + 20)', solution: 30 },
+    { equation: '40 - (15 + 10)', solution: 15 },
+    { equation: '75 - (20 + 30)', solution: 25 },
+    { equation: '95 - (45 + 25)', solution: 25 },
+    { equation: '55 - (20 + 10)', solution: 25 },
+    { equation: '88 - (30 + 25)', solution: 33 },
+    { equation: '66 - (20 + 15)', solution: 31 },
+    { equation: '57 - (20 + 30)', solution: 7 },
+    { equation: '74 - (40 + 20)', solution: 14 },
+    { equation: '82 - (25 + 30)', solution: 27 },
+    { equation: '61 - (15 + 20)', solution: 26 },
+    { equation: '92 - (50 + 25)', solution: 17 },
+    { equation: '73 - (30 + 15)', solution: 28 },
+    { equation: '64 - (20 + 25)', solution: 19 },
+    { equation: '99 - (60 + 20)', solution: 19 },
+    { equation: '54 - (15 + 20)', solution: 19 },
+    { equation: '86 - (30 + 25)', solution: 31 },
+    { equation: '91 - (40 + 35)', solution: 16 },
+    { equation: '70 - (15 + 25)', solution: 30 },
+    { equation: '98 - (40 + 20)', solution: 38 },
+    { equation: '67 - (20 + 25)', solution: 22 },
+    { equation: '75 - (15 + 20)', solution: 40 },
+    { equation: '84 - (35 + 15)', solution: 34 },
+    { equation: '58 - (20 + 20)', solution: 18 },
+    { equation: '72 - (10 + 20)', solution: 42 },
+    { equation: '100 - (50 + 30)', solution: 20 },
+    { equation: '62 - (30 + 20)', solution: 12 },
+    { equation: '49 - (15 + 10)', solution: 24 },
+    { equation: '93 - (50 + 30)', solution: 13 },
+    { equation: '66 - (25 + 25)', solution: 16 },
+{ equation: '(45 + 12) - 27', solution: 30 },
+    { equation: '(56 - 34) + 45', solution: 67 },
+    { equation: '(29 + 18) + 22', solution: 69 },
+    { equation: '(88 - 25) + 13', solution: 76 },
+    { equation: '(30 + 40) - 15', solution: 55 },
+    { equation: '(73 - 14) + 18', solution: 77 },
+    { equation: '(42 + 16) - 25', solution: 33 },
+    { equation: '(39 + 21) + 10', solution: 70 },
+    { equation: '(48 - 23) + 27', solution: 52 },
+    { equation: '(67 - 29) + 15', solution: 53 },
+    { equation: '(25 + 40) - 10', solution: 55 },
+    { equation: '(50 - 18) + 22', solution: 54 },
+    { equation: '(62 - 22) + 25', solution: 65 },
+    { equation: '(40 + 20) - 5', solution: 55 },
+    { equation: '(31 + 29) + 15', solution: 75 },
+    { equation: '(66 - 25) + 10', solution: 51 },
+    { equation: '(24 + 36) - 10', solution: 50 },
+    { equation: '(11 + 59) - 25', solution: 45 },
+    { equation: '(47 + 33) - 18', solution: 62 },
+    { equation: '(52 - 20) + 48', solution: 80 },
+    { equation: '(13 + 37) + 27', solution: 77 },
+    { equation: '(80 - 15) + 10', solution: 75 },
+    { equation: '(22 + 38) - 20', solution: 40 },
+    { equation: '(26 + 14) + 30', solution: 70 },
+    { equation: '(90 - 35) + 15', solution: 70 },
+    { equation: '(33 + 27) + 40', solution: 100 },
+    { equation: '(20 + 30) - 18', solution: 32 },
+    { equation: '(60 - 25) + 18', solution: 53 },
+    { equation: '(19 + 31) - 5', solution: 45 },
+    { equation: '(77 - 29) + 14', solution: 62 },
+    { equation: '(54 + 46) - 50', solution: 50 },
+    { equation: '(35 + 25) - 10', solution: 50 },
+    { equation: '(99 - 34) + 10', solution: 75 },
+    { equation: '(42 + 18) - 12', solution: 48 },
+    { equation: '(21 + 22) + 15', solution: 58 },
+    { equation: '(10 + 70) - 20', solution: 60 },
+    { equation: '(81 - 16) + 5', solution: 70 },
+    { equation: '(14 + 26) + 15', solution: 55 },
+    { equation: '(29 + 11) - 15', solution: 25 },
+    { equation: '(35 + 25) - 5', solution: 55 },
+    { equation: '(90 - 20) + 12', solution: 82 },
+    { equation: '(27 + 33) - 10', solution: 50 },
+    { equation: '(56 - 26) + 15', solution: 45 },
+    { equation: '(48 + 12) - 20', solution: 40 },
+    { equation: '(24 + 26) + 10', solution: 60 },
+    { equation: '(15 + 25) + 25', solution: 65 },
+    { equation: '(50 + 30) - 10', solution: 70 },
+{ equation: '(45 + 12) - (27 + 5)', solution: 25 },
+    { equation: '(56 - 34) + (45 - 15)', solution: 52 },
+    { equation: '(29 + 18) + (22 - 8)', solution: 61 },
+    { equation: '(88 - 25) + (13 - 3)', solution: 73 },
+    { equation: '(30 + 40) - (15 + 5)', solution: 50 },
+    { equation: '(73 - 14) + (18 - 8)', solution: 69 },
+    { equation: '(42 + 16) - (25 + 2)', solution: 31 },
+    { equation: '(39 + 21) + (10 - 5)', solution: 65 },
+    { equation: '(48 - 23) + (27 - 17)', solution: 35 },
+    { equation: '(67 - 29) + (15 - 5)', solution: 53 },
+    { equation: '(25 + 40) - (10 + 5)', solution: 50 },
+    { equation: '(50 - 18) + (22 - 2)', solution: 52 },
+    { equation: '(62 - 22) + (25 - 10)', solution: 55 },
+    { equation: '(40 + 20) - (5 + 5)', solution: 50 },
+    { equation: '(31 + 29) + (15 - 5)', solution: 70 },
+    { equation: '(66 - 25) + (10 - 5)', solution: 51 },
+    { equation: '(24 + 36) - (10 + 4)', solution: 46 },
+    { equation: '(11 + 59) - (25 + 5)', solution: 40 },
+    { equation: '(47 + 33) - (18 + 7)', solution: 55 },
+    { equation: '(52 - 20) + (48 - 30)', solution: 50 },
+    { equation: '(13 + 37) + (27 - 17)', solution: 60 },
+    { equation: '(80 - 15) + (10 - 5)', solution: 70 },
+    { equation: '(22 + 38) - (20 + 10)', solution: 30 },
+    { equation: '(26 + 14) + (30 - 10)', solution: 60 },
+    { equation: '(90 - 35) + (15 - 5)', solution: 65 },
+    { equation: '(33 + 27) + (40 - 20)', solution: 80 },
+    { equation: '(20 + 30) - (18 + 2)', solution: 30 },
+    { equation: '(60 - 25) + (18 - 8)', solution: 45 },
+    { equation: '(19 + 31) - (5 + 4)', solution: 42 },
+    { equation: '(77 - 29) + (14 - 4)', solution: 62 },
+    { equation: '(54 + 46) - (50 + 0)', solution: 50 },
+    { equation: '(35 + 25) - (10 + 5)', solution: 45 },
+    { equation: '(99 - 34) + (10 - 5)', solution: 70 },
+    { equation: '(42 + 18) - (12 + 8)', solution: 40 },
+    { equation: '(21 + 22) + (15 - 5)', solution: 53 },
+    { equation: '(10 + 70) - (20 + 10)', solution: 50 },
+    { equation: '(81 - 16) + (5 - 2)', solution: 68 },
+    { equation: '(14 + 26) + (15 - 5)', solution: 50 },
+    { equation: '(29 + 11) - (15 + 4)', solution: 21 },
+    { equation: '(35 + 25) - (5 + 10)', solution: 45 },
+    { equation: '(90 - 20) + (12 - 2)', solution: 80 },
+    { equation: '(27 + 33) - (10 + 0)', solution: 50 },
+    { equation: '(56 - 26) + (15 - 5)', solution: 40 },
+    { equation: '(48 + 12) - (20 + 5)', solution: 35 },
+    { equation: '(24 + 26) + (10 - 0)', solution: 60 },
+    { equation: '(15 + 25) + (25 - 10)', solution: 55 },
+    { equation: '(50 + 30) - (10 + 0)', solution: 70 }	
+        ];
+
+        // Funkcija za nasumično mešanje (shuffle) zadataka
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Promešaj zadatke pre prikazivanja
+        shuffle(tasks);
+
+        let currentTaskIndex = 0;
+
+        function displayTask() {
+            const taskElement = document.getElementById('task');
+            taskElement.textContent = tasks[currentTaskIndex].text || tasks[currentTaskIndex].equation;
+            document.getElementById('result').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('solution').value = '';
+        }
+
+        document.getElementById('checkButton').addEventListener('click', checkResult);
+        document.getElementById('result').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                checkResult();
+            }
+        });
+
+        function checkResult() {
+            const result = parseInt(document.getElementById('result').value);
+            const correctAnswer = tasks[currentTaskIndex].solution;
+            const feedbackElement = document.getElementById('feedback');
+
+            if (result === correctAnswer) {
+                feedbackElement.textContent = 'ТАЧНО! 🎉😄';
+            } else {
+                feedbackElement.textContent = 'Нетачно! 😟';
+            }
+        }
+
+        document.getElementById('nextTask').addEventListener('click', () => {
+            currentTaskIndex = (currentTaskIndex + 1) % tasks.length;
+            displayTask();
+        });
+
+        document.getElementById('prevTask').addEventListener('click', () => {
+            currentTaskIndex = (currentTaskIndex - 1 + tasks.length) % tasks.length;
+            displayTask();
+        });
+
+        // Prikaži prvi zadatak nakon shuffle
+        displayTask();
+    </script>
+</body>
+</html>
